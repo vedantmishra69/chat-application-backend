@@ -2,18 +2,29 @@ const User = require("../models/user")
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken")
 const saltRounds = 10;
-const { v4: uuidv4 } = require('uuid');
-
-
-const SECRET_FOR_JWT = uuidv4()
+const { SECRET_FOR_JWT } = require("../utils/constants")
+const { v4: uuidv4 } = require("uuid")
 
 exports.signUpUser = async (req, res) => {
   console.log(req.body)
   try {
+    const available = await User.findOne({ username: req.body.username })
+    if (available) {
+      res.status(409).json({ error: "Username already taken." })
+      return
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: "Some issue occured." })
+    return
+  }
+
+  try {
     const hashedPass = await bcrypt.hash(req.body.password, saltRounds)
+    const room = uuidv4()
     const newUser = new User({
       username: req.body.username,
-      password: hashedPass
+      password: hashedPass,
     })
     await newUser.save()
     res.status(201).json({ message: "User added." })
@@ -41,11 +52,12 @@ exports.signInUser = async (req, res) => {
 }
 
 exports.verifyUser = async (req, res) => {
-  console.log(req.body.token)
-  jwt.verify(req.body.token, SECRET_FOR_JWT, (err, decoded) => {
+  const token = req.headers['authorization']
+  console.log(token)
+  jwt.verify(token, SECRET_FOR_JWT, (err, decoded) => {
     if (err) {
       console.log(err)
       res.status(401).json({ error: err.name })
-    } else res.status(200).json({ message: "Welcome" + decoded.username })
+    } else res.status(200).json({ username: decoded.username })
   })
 }
