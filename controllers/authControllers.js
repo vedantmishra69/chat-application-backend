@@ -25,6 +25,7 @@ exports.signUpUser = async (req, res) => {
     const newUser = new User({
       username: req.body.username,
       password: hashedPass,
+      room: room
     })
     await newUser.save()
     res.status(201).json({ message: "User added." })
