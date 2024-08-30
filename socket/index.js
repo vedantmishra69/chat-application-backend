@@ -7,9 +7,10 @@ module.exports = (io) => {
       if (err) console.log(err)
       else {
         socket.user = decoded.username
+        socket.join(socket.user)
       }
     })
-    console.log(socket.user)
     require("./status")(socket)
+    require("./message")(socket)
   })
 }
