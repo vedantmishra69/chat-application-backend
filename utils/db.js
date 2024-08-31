@@ -15,7 +15,7 @@ exports.getUserList = async (req, res) => {
         else res.status(404).json({ error: "User list is empty" })
       } catch (error) {
         console.log(error)
-        res.status(500).json({ error: "unable to get data." })
+        res.status(500).json({ error: "Unable to get data." })
       }
     }
   })
