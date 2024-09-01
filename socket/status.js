@@ -1,7 +1,8 @@
-const isOnline = new Set()
 const debug = require("debug")("app:socket:status")
 
-module.exports = (socket) => {
+const isOnline = new Set()
+
+const status = (socket) => {
   if (socket.user) {
     isOnline.add(socket.user)
     console.log(socket.user)
@@ -19,3 +20,5 @@ module.exports = (socket) => {
     })
   }
 }
+
+module.exports = { isOnline, status }

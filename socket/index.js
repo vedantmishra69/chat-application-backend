@@ -1,5 +1,6 @@
 const { SECRET_FOR_JWT } = require("../utils/constants")
 const debug = require("debug")("app:socket:index")
+const { status } = require("./status")
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
@@ -12,7 +13,7 @@ module.exports = (io) => {
         socket.join(socket.user)
       }
     })
-    require("./status")(socket)
+    status(socket)
     require("./message")(socket)
   })
 }
