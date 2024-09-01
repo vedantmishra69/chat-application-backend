@@ -8,6 +8,7 @@ module.exports = (io) => {
       if (err) debug(err)
       else {
         socket.user = decoded.username
+        debug(socket.user + " connected")
         socket.join(socket.user)
       }
     })

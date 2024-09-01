@@ -4,9 +4,10 @@ const jwt = require("jsonwebtoken")
 const saltRounds = 10;
 const { SECRET_FOR_JWT } = require("../utils/constants")
 const { v4: uuidv4 } = require("uuid")
+const debug = require("debug")("app:controllers:auth")
 
 exports.signUpUser = async (req, res) => {
-  console.log(req.body)
+  debug(req.body)
   try {
     const available = await User.findOne({ username: req.body.username })
     if (available) {
@@ -14,7 +15,7 @@ exports.signUpUser = async (req, res) => {
       return
     }
   } catch (error) {
-    console.log(error)
+    debug(error)
     res.status(500).json({ error: "Some issue occured." })
     return
   }
@@ -30,7 +31,7 @@ exports.signUpUser = async (req, res) => {
     await newUser.save()
     res.status(201).json({ message: "User added." })
   } catch (error) {
-    console.log(error)
+    debug(error)
     res.status(500).json({ error: "Couldn't add the user." })
   }
 }
@@ -47,17 +48,17 @@ exports.signInUser = async (req, res) => {
       res.status(200).json({ token: token })
     }
   } catch (error) {
-    console.log(error)
+    debug(error)
     res.status(404).json({ error: "User not found." })
   }
 }
 
 exports.verifyUser = async (req, res) => {
   const token = req.headers['authorization']
-  console.log(token)
+  debug(token)
   jwt.verify(token, SECRET_FOR_JWT, (err, decoded) => {
     if (err) {
-      console.log(err)
+      debug(err)
       res.status(401).json({ error: err.name })
     } else res.status(200).json({ username: decoded.username })
   })
